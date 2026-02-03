@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\TaskController;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\LogoutController;
 use App\Http\Controllers\Api\CommentController;
+use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\RegisterController;
 
 Route::get('/user', function (Request $request) {
@@ -16,6 +17,9 @@ Route::get('/user', function (Request $request) {
 Route::middleware('auth:sanctum')->group(function () {
     //tasks
     Route::apiResource('tasks', TaskController::class);
+
+    //categories
+    Route::get('/categories', [CategoryController::class, 'index']);
 
     //comments
     Route::post('/comments', [CommentController::class, 'store']);

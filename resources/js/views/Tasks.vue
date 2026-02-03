@@ -216,11 +216,11 @@
 
                 <!-- Filters -->
                 <div
-                    class="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-gray-200 shadow-sm"
+                    class="bg-white/80 backdrop-blur-sm rounded-xl p-6 border border-gray-200 shadow-sm"
                 >
-                    <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-2 mb-4">
                         <svg
-                            class="h-5 w-5 text-gray-500"
+                            class="h-5 w-5 text-indigo-600"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -232,19 +232,109 @@
                                 d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
                             ></path>
                         </svg>
-                        <label class="text-sm font-semibold text-gray-700"
-                            >Filter by Status:</label
+                        <h3 class="text-lg font-semibold text-gray-900">Filters</h3>
+                        <button
+                            v-if="filters.status || filters.priority || filters.category_id"
+                            @click="() => { filters.status = ''; filters.priority = ''; filters.category_id = ''; fetchTasks(); }"
+                            class="ml-auto text-sm text-indigo-600 hover:text-indigo-700 font-medium transition duration-200"
                         >
-                        <select
-                            v-model="filters.status"
-                            @change="fetchTasks"
-                            class="flex-1 max-w-xs rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500 transition duration-200"
-                        >
-                            <option value="">All Tasks</option>
-                            <option value="pending">Pending</option>
-                            <option value="in_progress">In Progress</option>
-                            <option value="completed">Completed</option>
-                        </select>
+                            Clear All
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="space-y-2">
+                            <label class="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                                <div class="h-8 w-8 bg-amber-100 rounded-lg flex items-center justify-center">
+                                    <svg
+                                        class="h-4 w-4 text-amber-600"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                        ></path>
+                                    </svg>
+                                </div>
+                                Status
+                            </label>
+                            <select
+                                v-model="filters.status"
+                                @change="fetchTasks"
+                                class="w-full px-4 py-2.5 rounded-lg border-2 border-gray-200 hover:border-indigo-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200 bg-white text-gray-700 font-medium"
+                            >
+                                <option value="">All Statuses</option>
+                                <option value="pending">⏳ Pending</option>
+                                <option value="in_progress">🚀 In Progress</option>
+                                <option value="completed">✅ Completed</option>
+                            </select>
+                        </div>
+                        
+                        <div class="space-y-2">
+                            <label class="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                                <div class="h-8 w-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                                    <svg
+                                        class="h-4 w-4 text-purple-600"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+                                        ></path>
+                                    </svg>
+                                </div>
+                                Category
+                            </label>
+                            <select
+                                v-model="filters.category_id"
+                                @change="fetchTasks"
+                                class="w-full px-4 py-2.5 rounded-lg border-2 border-gray-200 hover:border-indigo-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200 bg-white text-gray-700 font-medium"
+                            >
+                                <option value="">All Categories</option>
+                                <option v-for="category in categories" :key="category.id" :value="category.id">
+                                    {{ category.icon }} {{ category.name }}
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                                <div class="h-8 w-8 bg-red-100 rounded-lg flex items-center justify-center">
+                                    <svg
+                                        class="h-4 w-4 text-red-600"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M13 10V3L4 14h7v7l9-11h-7z"
+                                        ></path>
+                                    </svg>
+                                </div>
+                                Priority
+                            </label>
+                            <select
+                                v-model="filters.priority"
+                                @change="fetchTasks"
+                                class="w-full px-4 py-2.5 rounded-lg border-2 border-gray-200 hover:border-indigo-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200 bg-white text-gray-700 font-medium"
+                            >
+                                <option value="">All Priorities</option>
+                                <option value="low">🟢 Low</option>
+                                <option value="medium">🟡 Medium</option>
+                                <option value="high">🔴 High</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -329,21 +419,41 @@
                     >
                         <div class="flex justify-between items-start mb-4">
                             <div class="flex-1">
-                                <h3
-                                    class="text-lg font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition duration-200"
-                                >
-                                    {{ task.title }}
-                                </h3>
-                                <span
-                                    class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold"
-                                    :class="getStatusClass(task.status)"
-                                >
+                                <div class="flex items-center gap-2 mb-2">
+                                    <h3
+                                        class="text-lg font-bold text-gray-900 group-hover:text-indigo-600 transition duration-200"
+                                    >
+                                        {{ task.title }}
+                                    </h3>
                                     <span
-                                        class="h-1.5 w-1.5 rounded-full mr-1.5"
-                                        :class="getStatusDotClass(task.status)"
-                                    ></span>
-                                    {{ formatStatus(task.status) }}
-                                </span>
+                                        v-if="task.category"
+                                        class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium"
+                                        :style="{ backgroundColor: task.category.color + '20', color: task.category.color }"
+                                    >
+                                        {{ task.category.icon }} {{ task.category.name }}
+                                    </span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span
+                                        class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold"
+                                        :class="getStatusClass(task.status)"
+                                    >
+                                        <span
+                                            class="h-1.5 w-1.5 rounded-full mr-1.5"
+                                            :class="getStatusDotClass(task.status)"
+                                        ></span>
+                                        {{ formatStatus(task.status) }}
+                                    </span>
+                                    <span
+                                        class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold"
+                                        :class="getPriorityClass(task.priority)"
+                                    >
+                                        <span
+                                            class="mr-1.5"
+                                        >{{ getPriorityIcon(task.priority) }}</span>
+                                        {{ formatPriority(task.priority) }}
+                                    </span>
+                                </div>
                             </div>
                         </div>
 
@@ -587,6 +697,38 @@
                         </select>
                     </div>
 
+                    <div>
+                        <label
+                            class="block text-sm font-semibold text-gray-700 mb-2"
+                            >Priority</label
+                        >
+                        <select
+                            v-model="taskForm.priority"
+                            required
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
+                        >
+                            <option value="low">🟢 Low</option>
+                            <option value="medium">🟡 Medium</option>
+                            <option value="high">🔴 High</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label
+                            class="block text-sm font-semibold text-gray-700 mb-2"
+                            >Category</label
+                        >
+                        <select
+                            v-model="taskForm.category_id"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
+                        >
+                            <option value="">No Category</option>
+                            <option v-for="category in categories" :key="category.id" :value="category.id">
+                                {{ category.icon }} {{ category.name }}
+                            </option>
+                        </select>
+                    </div>
+
                     <div class="flex gap-3 pt-4">
                         <button
                             type="button"
@@ -712,6 +854,7 @@ export default {
     setup() {
         const router = useRouter();
         const tasks = ref([]);
+        const categories = ref([]);
         const loading = ref(false);
         const showModal = ref(false);
         const showDeleteModal = ref(false);
@@ -724,6 +867,8 @@ export default {
 
         const filters = ref({
             status: "",
+            priority: "",
+            category_id: "",
         });
 
         const pagination = ref({
@@ -737,6 +882,8 @@ export default {
             title: "",
             description: "",
             status: "pending",
+            priority: "medium",
+            category_id: "",
         });
 
         const fetchTasks = async (page = 1) => {
@@ -748,6 +895,12 @@ export default {
                 };
                 if (filters.value.status) {
                     params.status = filters.value.status;
+                }
+                if (filters.value.priority) {
+                    params.priority = filters.value.priority;
+                }
+                if (filters.value.category_id) {
+                    params.category_id = filters.value.category_id;
                 }
                 const response = await api.getTasks(params);
                 tasks.value = response.data;
@@ -762,6 +915,15 @@ export default {
                 console.error("Error fetching tasks:", error);
             } finally {
                 loading.value = false;
+            }
+        };
+
+        const fetchCategories = async () => {
+            try {
+                const response = await api.getCategories();
+                categories.value = response.data;
+            } catch (error) {
+                console.error("Error fetching categories:", error);
             }
         };
 
@@ -780,6 +942,8 @@ export default {
                 title: "",
                 description: "",
                 status: "pending",
+                priority: "medium",
+                category_id: "",
             };
             formError.value = "";
             showModal.value = true;
@@ -792,6 +956,8 @@ export default {
                 title: task.title,
                 description: task.description,
                 status: task.status,
+                priority: task.priority,
+                category_id: task.category_id || "",
             };
             formError.value = "";
             showModal.value = true;
@@ -803,6 +969,8 @@ export default {
                 title: "",
                 description: "",
                 status: "pending",
+                priority: "medium",
+                category_id: "",
             };
             formError.value = "";
         };
@@ -812,14 +980,18 @@ export default {
             formError.value = "";
 
             try {
+                const taskData = {
+                    title: taskForm.value.title,
+                    description: taskForm.value.description,
+                    status: taskForm.value.status,
+                    priority: taskForm.value.priority,
+                    category_id: taskForm.value.category_id || null,
+                };
+
                 if (isEditing.value) {
-                    await api.updateTask(taskForm.value.id, {
-                        title: taskForm.value.title,
-                        description: taskForm.value.description,
-                        status: taskForm.value.status,
-                    });
+                    await api.updateTask(taskForm.value.id, taskData);
                 } else {
-                    await api.createTask(taskForm.value);
+                    await api.createTask(taskData);
                 }
                 closeModal();
                 fetchTasks();
@@ -895,6 +1067,29 @@ export default {
                 .replace(/\b\w/g, (l) => l.toUpperCase());
         };
 
+        const formatPriority = (priority) => {
+            if (!priority) return '';
+            return priority.charAt(0).toUpperCase() + priority.slice(1);
+        };
+
+        const getPriorityClass = (priority) => {
+            const classes = {
+                low: "bg-green-50 text-green-700 border border-green-200",
+                medium: "bg-yellow-50 text-yellow-700 border border-yellow-200",
+                high: "bg-red-50 text-red-700 border border-red-200",
+            };
+            return classes[priority] || classes.medium;
+        };
+
+        const getPriorityIcon = (priority) => {
+            const icons = {
+                low: "🟢",
+                medium: "🟡",
+                high: "🔴",
+            };
+            return icons[priority] || icons.medium;
+        };
+
         const viewTask = (taskId) => {
             router.push(`/tasks/${taskId}`);
         };
@@ -919,11 +1114,13 @@ export default {
 
         onMounted(() => {
             fetchUser();
+            fetchCategories();
             fetchTasks();
         });
 
         return {
             tasks,
+            categories,
             loading,
             showModal,
             showDeleteModal,
@@ -948,6 +1145,9 @@ export default {
             getStatusClass,
             getStatusDotClass,
             formatStatus,
+            formatPriority,
+            getPriorityClass,
+            getPriorityIcon,
             pagination,
             goToPage,
             nextPage,

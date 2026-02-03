@@ -50,13 +50,30 @@
           <div class="flex justify-between items-start mb-6">
             <div class="flex-1">
               <h2 class="text-3xl font-bold text-gray-900 mb-3">{{ task.title }}</h2>
-              <span
-                class="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-semibold"
-                :class="getStatusClass(task.status)"
-              >
-                <span class="h-2 w-2 rounded-full mr-2" :class="getStatusDotClass(task.status)"></span>
-                {{ formatStatus(task.status) }}
-              </span>
+              <div class="flex items-center gap-2 flex-wrap">
+                <span
+                  class="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-semibold"
+                  :class="getStatusClass(task.status)"
+                >
+                  <span class="h-2 w-2 rounded-full mr-2" :class="getStatusDotClass(task.status)"></span>
+                  {{ formatStatus(task.status) }}
+                </span>
+                <span
+                  class="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-semibold"
+                  :class="getPriorityClass(task.priority)"
+                >
+                  <span class="mr-2">{{ getPriorityIcon(task.priority) }}</span>
+                  {{ formatPriority(task.priority) }} Priority
+                </span>
+                <span
+                  v-if="task.category"
+                  class="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-semibold"
+                  :style="{ backgroundColor: task.category.color + '20', color: task.category.color, border: `1px solid ${task.category.color}40` }"
+                >
+                  <span class="mr-2">{{ task.category.icon }}</span>
+                  {{ task.category.name }}
+                </span>
+              </div>
             </div>
           </div>
           
@@ -338,6 +355,29 @@ export default {
       });
     };
 
+    const formatPriority = (priority) => {
+      if (!priority) return '';
+      return priority.charAt(0).toUpperCase() + priority.slice(1);
+    };
+
+    const getPriorityClass = (priority) => {
+      const classes = {
+        low: 'bg-green-50 text-green-700 border border-green-200',
+        medium: 'bg-yellow-50 text-yellow-700 border border-yellow-200',
+        high: 'bg-red-50 text-red-700 border border-red-200',
+      };
+      return classes[priority] || classes.medium;
+    };
+
+    const getPriorityIcon = (priority) => {
+      const icons = {
+        low: '🟢',
+        medium: '🟡',
+        high: '🔴',
+      };
+      return icons[priority] || icons.medium;
+    };
+
     onMounted(() => {
       fetchUser();
       fetchTask();
@@ -362,7 +402,10 @@ export default {
       getStatusClass,
       getStatusDotClass,
       formatStatus,
-      formatDate
+      formatDate,
+      formatPriority,
+      getPriorityClass,
+      getPriorityIcon
     };
   }
 };

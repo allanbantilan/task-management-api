@@ -92,5 +92,11 @@ export default {
   async updateComment(id, data) {
     const response = await api.put(`/comments/${id}`, data);
     return response.data;
+  },
+
+  // Categories
+  async getCategories() {
+    const response = await api.get('/categories');
+    return response.data;
   }
 };

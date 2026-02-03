@@ -31,7 +31,12 @@ class TaskResource extends JsonResource
             'title' => $this->title,
             'description' => $this->description,
             'status' => $this->status->value,
+            'priority' => $this->priority->value,
+            'category' => new CategoryResource($this->whenLoaded('category')),
+            'category_id' => $this->category_id,
             'comments' => CommentResource::collection($this->whenLoaded('comments')),
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 }

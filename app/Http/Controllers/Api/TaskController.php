@@ -88,10 +88,17 @@ class TaskController extends Controller
 
         $tasks = $request->user()
             ->tasks()
-            ->with('comments')
+            ->with(['comments', 'category'])
             ->when($request->has('status'), function ($query) use ($request) {
                 $query->where('status', $request->query('status'));
             })
+            ->when($request->has('priority'), function ($query) use ($request) {
+                $query->where('priority', $request->query('priority'));
+            })
+            ->when($request->has('category_id'), function ($query) use ($request) {
+                $query->where('category_id', $request->query('category_id'));
+            })
+            ->orderBy($request->query('sort_by', 'created_at'), $request->query('sort_order', 'desc'))
             ->paginate($perPage);
 
         return TaskResource::collection($tasks);
@@ -123,7 +130,7 @@ class TaskController extends Controller
     public function show(Request $request, $id)
     {
         try {
-            $task = $request->user()->tasks()->with('comments.user')->findOrFail($id);
+            $task = $request->user()->tasks()->with(['comments.user', 'category'])->findOrFail($id);
             return new TaskResource($task);
         } catch (ModelNotFoundException $e) {
             return response()->json(['message' => 'Task not found'], 404);

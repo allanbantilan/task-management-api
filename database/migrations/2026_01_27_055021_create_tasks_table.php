@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\PriorityEnum;
 use App\Models\User;
 use App\Enums\TaskStatus;
 use Illuminate\Support\Facades\Schema;
@@ -19,6 +20,7 @@ return new class extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->string('status')->default(TaskStatus::PENDING->value);
+            $table->string('priority')->default(PriorityEnum::MEDIUM->value);
             $table->timestamps();
         });
     }
