@@ -2,6 +2,70 @@
     <div
         class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100"
     >
+        <!-- Login Success Message Slider -->
+        <transition
+            enter-active-class="transform transition duration-500 ease-out"
+            enter-from-class="translate-y-0 opacity-0 translate-x-full"
+            enter-to-class="translate-y-0 opacity-100 translate-x-0"
+            leave-active-class="transform transition duration-300 ease-in"
+            leave-from-class="translate-y-0 opacity-100 translate-x-0"
+            leave-to-class="translate-y-0 opacity-0 translate-x-full"
+        >
+            <div
+                v-if="showLoginSuccess"
+                class="fixed top-4 right-4 left-4 sm:left-auto sm:max-w-md z-50 bg-green-50 border-l-4 border-green-500 text-green-700 px-4 py-3 rounded-lg shadow-lg flex items-start gap-3"
+            >
+                <svg class="h-6 w-6 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                </svg>
+                <div class="flex-1">
+                    <p class="font-semibold">Login Successful</p>
+                    <p class="text-sm">{{ loginSuccessMessage }}</p>
+                </div>
+                <button
+                    @click="showLoginSuccess = false"
+                    type="button"
+                    class="text-green-500 hover:text-green-700 transition duration-200 flex-shrink-0"
+                >
+                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                    </svg>
+                </button>
+            </div>
+        </transition>
+
+        <!-- Task Success Message Slider -->
+        <transition
+            enter-active-class="transform transition duration-500 ease-out"
+            enter-from-class="translate-y-0 opacity-0 translate-x-full"
+            enter-to-class="translate-y-0 opacity-100 translate-x-0"
+            leave-active-class="transform transition duration-300 ease-in"
+            leave-from-class="translate-y-0 opacity-100 translate-x-0"
+            leave-to-class="translate-y-0 opacity-0 translate-x-full"
+        >
+            <div
+                v-if="showTaskSuccess"
+                class="fixed top-20 right-4 left-4 sm:left-auto sm:max-w-md z-50 bg-blue-50 border-l-4 border-blue-500 text-blue-700 px-4 py-3 rounded-lg shadow-lg flex items-start gap-3"
+            >
+                <svg class="h-6 w-6 text-blue-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                </svg>
+                <div class="flex-1">
+                    <p class="font-semibold">Success</p>
+                    <p class="text-sm">{{ taskSuccessMessage }}</p>
+                </div>
+                <button
+                    @click="showTaskSuccess = false"
+                    type="button"
+                    class="text-blue-500 hover:text-blue-700 transition duration-200 flex-shrink-0"
+                >
+                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                    </svg>
+                </button>
+            </div>
+        </transition>
+
         <!-- Modern Navbar -->
         <nav
             class="bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-200 sticky top-0 z-40"
@@ -52,7 +116,7 @@
                             <span class="font-medium">{{ userEmail }}</span>
                         </div>
                         <button
-                            @click="handleLogout"
+                            @click="showLogoutConfirmation"
                             class="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 rounded-lg shadow-md transition duration-200 transform hover:scale-105"
                         >
                             <svg
@@ -232,20 +296,37 @@
                                 d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
                             ></path>
                         </svg>
-                        <h3 class="text-lg font-semibold text-gray-900">Filters</h3>
+                        <h3 class="text-lg font-semibold text-gray-900">
+                            Filters
+                        </h3>
                         <button
-                            v-if="filters.status || filters.priority || filters.category_id"
-                            @click="() => { filters.status = ''; filters.priority = ''; filters.category_id = ''; fetchTasks(); }"
+                            v-if="
+                                filters.status ||
+                                filters.priority ||
+                                filters.category_id
+                            "
+                            @click="
+                                () => {
+                                    filters.status = '';
+                                    filters.priority = '';
+                                    filters.category_id = '';
+                                    fetchTasks();
+                                }
+                            "
                             class="ml-auto text-sm text-indigo-600 hover:text-indigo-700 font-medium transition duration-200"
                         >
                             Clear All
                         </button>
                     </div>
-                    
+
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div class="space-y-2">
-                            <label class="flex items-center gap-2 text-sm font-semibold text-gray-700">
-                                <div class="h-8 w-8 bg-amber-100 rounded-lg flex items-center justify-center">
+                            <label
+                                class="flex items-center gap-2 text-sm font-semibold text-gray-700"
+                            >
+                                <div
+                                    class="h-8 w-8 bg-amber-100 rounded-lg flex items-center justify-center"
+                                >
                                     <svg
                                         class="h-4 w-4 text-amber-600"
                                         fill="none"
@@ -269,14 +350,20 @@
                             >
                                 <option value="">All Statuses</option>
                                 <option value="pending">⏳ Pending</option>
-                                <option value="in_progress">🚀 In Progress</option>
+                                <option value="in_progress">
+                                    🚀 In Progress
+                                </option>
                                 <option value="completed">✅ Completed</option>
                             </select>
                         </div>
-                        
+
                         <div class="space-y-2">
-                            <label class="flex items-center gap-2 text-sm font-semibold text-gray-700">
-                                <div class="h-8 w-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                            <label
+                                class="flex items-center gap-2 text-sm font-semibold text-gray-700"
+                            >
+                                <div
+                                    class="h-8 w-8 bg-purple-100 rounded-lg flex items-center justify-center"
+                                >
                                     <svg
                                         class="h-4 w-4 text-purple-600"
                                         fill="none"
@@ -299,15 +386,23 @@
                                 class="w-full px-4 py-2.5 rounded-lg border-2 border-gray-200 hover:border-indigo-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200 bg-white text-gray-700 font-medium"
                             >
                                 <option value="">All Categories</option>
-                                <option v-for="category in categories" :key="category.id" :value="category.id">
+                                <option
+                                    v-for="category in categories"
+                                    :key="category.id"
+                                    :value="category.id"
+                                >
                                     {{ category.icon }} {{ category.name }}
                                 </option>
                             </select>
                         </div>
 
                         <div class="space-y-2">
-                            <label class="flex items-center gap-2 text-sm font-semibold text-gray-700">
-                                <div class="h-8 w-8 bg-red-100 rounded-lg flex items-center justify-center">
+                            <label
+                                class="flex items-center gap-2 text-sm font-semibold text-gray-700"
+                            >
+                                <div
+                                    class="h-8 w-8 bg-red-100 rounded-lg flex items-center justify-center"
+                                >
                                     <svg
                                         class="h-4 w-4 text-red-600"
                                         fill="none"
@@ -417,91 +512,113 @@
                         @click="viewTask(task.id)"
                         class="group bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 cursor-pointer"
                     >
-                        <div class="flex justify-between items-start mb-4">
-                            <div class="flex-1">
-                                <div class="flex items-center gap-2 mb-2">
+                        <!-- Main content container with flex-col -->
+                        <div class="flex flex-col h-full">
+                            <!-- Header section with category fixed to right -->
+                            <div class="flex justify-between items-start mb-4">
+                                <!-- Task title section that can grow -->
+                                <div class="flex-1 min-w-0 mr-4">
                                     <h3
-                                        class="text-lg font-bold text-gray-900 group-hover:text-indigo-600 transition duration-200"
+                                        class="text-lg font-bold text-gray-900 group-hover:text-indigo-600 transition duration-200 truncate"
                                     >
                                         {{ task.title }}
                                     </h3>
+                                </div>
+
+                                <!-- Category badge - fixed to right, won't move -->
+                                <div class="flex-shrink-0">
                                     <span
                                         v-if="task.category"
-                                        class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium"
-                                        :style="{ backgroundColor: task.category.color + '20', color: task.category.color }"
-                                    >
-                                        {{ task.category.icon }} {{ task.category.name }}
-                                    </span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <span
-                                        class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold"
-                                        :class="getStatusClass(task.status)"
+                                        class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium gap-1 whitespace-nowrap"
+                                        :style="{
+                                            backgroundColor:
+                                                task.category.color + '20',
+                                            color: task.category.color,
+                                        }"
                                     >
                                         <span
-                                            class="h-1.5 w-1.5 rounded-full mr-1.5"
-                                            :class="getStatusDotClass(task.status)"
-                                        ></span>
-                                        {{ formatStatus(task.status) }}
-                                    </span>
-                                    <span
-                                        class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold"
-                                        :class="getPriorityClass(task.priority)"
-                                    >
-                                        <span
-                                            class="mr-1.5"
-                                        >{{ getPriorityIcon(task.priority) }}</span>
-                                        {{ formatPriority(task.priority) }}
+                                            class="flex items-center justify-center text-sm leading-none"
+                                            >{{ task.category.icon }}</span
+                                        >
+                                        <span>{{ task.category.name }}</span>
                                     </span>
                                 </div>
                             </div>
-                        </div>
 
-                        <p
-                            class="text-gray-600 text-sm mb-6 line-clamp-3 leading-relaxed"
-                        >
-                            {{ task.description || "No description provided" }}
-                        </p>
+                            <!-- Status and priority badges -->
+                            <div class="flex items-center gap-2 mb-4">
+                                <span
+                                    class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap"
+                                    :class="getStatusClass(task.status)"
+                                >
+                                    <span
+                                        class="h-1.5 w-1.5 rounded-full mr-1.5"
+                                        :class="getStatusDotClass(task.status)"
+                                    ></span>
+                                    {{ formatStatus(task.status) }}
+                                </span>
+                                <span
+                                    class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap"
+                                    :class="getPriorityClass(task.priority)"
+                                >
+                                    <span class="mr-1.5">{{
+                                        getPriorityIcon(task.priority)
+                                    }}</span>
+                                    {{ formatPriority(task.priority) }}
+                                </span>
+                            </div>
 
-                        <div class="flex gap-2">
-                            <button
-                                @click.stop="openEditModal(task)"
-                                class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition duration-200"
+                            <!-- Description with flex-grow to push buttons down -->
+                            <p
+                                class="text-gray-600 text-sm mb-6 line-clamp-3 leading-relaxed flex-grow"
                             >
-                                <svg
-                                    class="h-4 w-4"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
+                                {{
+                                    task.description ||
+                                    "No description provided"
+                                }}
+                            </p>
+
+                            <!-- Buttons at the bottom -->
+                            <div class="flex gap-2 mt-auto">
+                                <button
+                                    @click.stop="openEditModal(task)"
+                                    class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition duration-200 whitespace-nowrap"
                                 >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                                    ></path>
-                                </svg>
-                                Edit
-                            </button>
-                            <button
-                                @click.stop="confirmDelete(task)"
-                                class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition duration-200"
-                            >
-                                <svg
-                                    class="h-4 w-4"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
+                                    <svg
+                                        class="h-4 w-4 flex-shrink-0"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                        ></path>
+                                    </svg>
+                                    Edit
+                                </button>
+                                <button
+                                    @click.stop="confirmDelete(task)"
+                                    class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition duration-200 whitespace-nowrap"
                                 >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                    ></path>
-                                </svg>
-                                Delete
-                            </button>
+                                    <svg
+                                        class="h-4 w-4 flex-shrink-0"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                        ></path>
+                                    </svg>
+                                    Delete
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -723,7 +840,11 @@
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
                         >
                             <option value="">No Category</option>
-                            <option v-for="category in categories" :key="category.id" :value="category.id">
+                            <option
+                                v-for="category in categories"
+                                :key="category.id"
+                                :value="category.id"
+                            >
                                 {{ category.icon }} {{ category.name }}
                             </option>
                         </select>
@@ -841,6 +962,53 @@
                 </div>
             </div>
         </div>
+
+        <!-- Logout Confirmation Modal -->
+        <div
+            v-if="showLogoutModal"
+            class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+            @click.self="closeLogoutModal"
+        >
+            <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8">
+                <div
+                    class="flex items-center justify-center h-16 w-16 mx-auto mb-4 bg-red-100 rounded-full"
+                >
+                    <svg
+                        class="h-8 w-8 text-red-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                        ></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 text-center mb-2">
+                    Logout Confirmation
+                </h3>
+                <p class="text-gray-600 text-center mb-6">
+                    Are you sure you want to logout? You will need to login again to access your tasks.
+                </p>
+                <div class="flex gap-3">
+                    <button
+                        @click="closeLogoutModal"
+                        class="flex-1 px-6 py-3 text-sm font-semibold text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition duration-200"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        @click="handleLogout"
+                        class="flex-1 flex items-center justify-center px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 rounded-lg transition duration-200"
+                    >
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -858,12 +1026,17 @@ export default {
         const loading = ref(false);
         const showModal = ref(false);
         const showDeleteModal = ref(false);
+        const showLogoutModal = ref(false);
         const isEditing = ref(false);
         const saving = ref(false);
         const deleting = ref(false);
         const formError = ref("");
         const taskToDelete = ref(null);
         const userEmail = ref("");
+        const showLoginSuccess = ref(false);
+        const loginSuccessMessage = ref("");
+        const showTaskSuccess = ref(false);
+        const taskSuccessMessage = ref("");
 
         const filters = ref({
             status: "",
@@ -990,11 +1163,20 @@ export default {
 
                 if (isEditing.value) {
                     await api.updateTask(taskForm.value.id, taskData);
+                    taskSuccessMessage.value = 'Task updated successfully!';
                 } else {
                     await api.createTask(taskData);
+                    taskSuccessMessage.value = 'Task created successfully!';
                 }
+                
                 closeModal();
                 fetchTasks();
+                
+                // Show success notification
+                showTaskSuccess.value = true;
+                setTimeout(() => {
+                    showTaskSuccess.value = false;
+                }, 4000);
             } catch (error) {
                 if (error.response?.data?.errors) {
                     formError.value = Object.values(error.response.data.errors)
@@ -1025,11 +1207,26 @@ export default {
                 await api.deleteTask(taskToDelete.value.id);
                 closeDeleteModal();
                 fetchTasks();
+                
+                // Show success notification
+                taskSuccessMessage.value = 'Task deleted successfully!';
+                showTaskSuccess.value = true;
+                setTimeout(() => {
+                    showTaskSuccess.value = false;
+                }, 4000);
             } catch (error) {
                 console.error("Error deleting task:", error);
             } finally {
                 deleting.value = false;
             }
+        };
+
+        const showLogoutConfirmation = () => {
+            showLogoutModal.value = true;
+        };
+
+        const closeLogoutModal = () => {
+            showLogoutModal.value = false;
         };
 
         const handleLogout = async () => {
@@ -1039,7 +1236,7 @@ export default {
                 console.error("Logout error:", error);
             } finally {
                 localStorage.removeItem("token");
-                router.push("/login");
+                router.push("/login?logout=true");
             }
         };
 
@@ -1068,7 +1265,7 @@ export default {
         };
 
         const formatPriority = (priority) => {
-            if (!priority) return '';
+            if (!priority) return "";
             return priority.charAt(0).toUpperCase() + priority.slice(1);
         };
 
@@ -1113,6 +1310,21 @@ export default {
         };
 
         onMounted(() => {
+            // Check if user just logged in
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('login') === 'success') {
+                loginSuccessMessage.value = 'Welcome back! You have successfully logged in.';
+                showLoginSuccess.value = true;
+                
+                // Remove query parameter from URL
+                window.history.replaceState({}, document.title, '/tasks');
+                
+                // Auto-hide after 4 seconds
+                setTimeout(() => {
+                    showLoginSuccess.value = false;
+                }, 4000);
+            }
+            
             fetchUser();
             fetchCategories();
             fetchTasks();
@@ -1124,6 +1336,11 @@ export default {
             loading,
             showModal,
             showDeleteModal,
+            showLogoutModal,
+            showLoginSuccess,
+            loginSuccessMessage,
+            showTaskSuccess,
+            taskSuccessMessage,
             isEditing,
             saving,
             deleting,
@@ -1141,6 +1358,8 @@ export default {
             closeDeleteModal,
             deleteTask,
             viewTask,
+            showLogoutConfirmation,
+            closeLogoutModal,
             handleLogout,
             getStatusClass,
             getStatusDotClass,

@@ -58,6 +58,6 @@ class LoginController extends Controller
             ]);
         }
 
-        return response()->json(['message' => 'Unauthorized'], 401);
+        return response()->json(['message' => 'Invalid email or password. Please check your credentials and try again.'], 401);
     }
 }

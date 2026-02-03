@@ -1,5 +1,36 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <!-- Success Message Slider -->
+    <transition
+      enter-active-class="transform transition duration-500 ease-out"
+      enter-from-class="translate-y-0 opacity-0 translate-x-full"
+      enter-to-class="translate-y-0 opacity-100 translate-x-0"
+      leave-active-class="transform transition duration-300 ease-in"
+      leave-from-class="translate-y-0 opacity-100 translate-x-0"
+      leave-to-class="translate-y-0 opacity-0 translate-x-full"
+    >
+      <div
+        v-if="showSuccess"
+        class="fixed top-4 right-4 left-4 sm:left-auto sm:max-w-md z-50 bg-green-50 border-l-4 border-green-500 text-green-700 px-4 py-3 rounded-lg shadow-lg flex items-start gap-3"
+      >
+        <svg class="h-6 w-6 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+        </svg>
+        <div class="flex-1">
+          <p class="font-semibold">Logged Out Successfully</p>
+          <p class="text-sm">{{ successMessage }}</p>
+        </div>
+        <button
+          @click="showSuccess = false"
+          class="text-green-500 hover:text-green-700 transition duration-200"
+        >
+          <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+          </svg>
+        </button>
+      </div>
+    </transition>
+
     <div class="max-w-md w-full">
       <!-- Logo/Title Section -->
       <div class="text-center mb-8">
@@ -18,12 +49,21 @@
 
       <!-- Login Card -->
       <div class="bg-white/80 backdrop-blur-sm shadow-2xl rounded-2xl p-8 border border-gray-100">
-        <form class="space-y-6" @submit.prevent="handleLogin">
+        <form class="space-y-6" @submit.prevent="handleLogin" novalidate>
           <div v-if="error" class="bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-md flex items-start gap-3">
-            <svg class="h-5 w-5 text-red-500 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+            <svg class="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
             </svg>
-            <span class="text-sm">{{ error }}</span>
+            <span class="text-sm flex-1">{{ error }}</span>
+            <button
+              @click="error = ''"
+              type="button"
+              class="text-red-500 hover:text-red-700 transition duration-200 flex-shrink-0"
+            >
+              <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+              </svg>
+            </button>
           </div>
 
           <div>
@@ -92,29 +132,52 @@
 </template>
 
 <script>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, onMounted, watch } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import api from '../services/api';
 
 export default {
   name: 'Login',
   setup() {
     const router = useRouter();
+    const route = useRoute();
     const form = ref({
       email: '',
       password: ''
     });
     const loading = ref(false);
     const error = ref('');
+    const successMessage = ref('');
+    const showSuccess = ref(false);
+
+    // Clear error when user starts typing
+    watch(form, () => {
+      if (error.value) {
+        error.value = '';
+      }
+    }, { deep: true });
 
     const handleLogin = async () => {
-      loading.value = true;
+      // Clear previous error
       error.value = '';
+      
+      // Validate fields
+      if (!form.value.email || !form.value.password) {
+        error.value = 'Please fill in all fields.';
+        return;
+      }
+      
+      if (!form.value.email.includes('@')) {
+        error.value = 'Please enter a valid email address.';
+        return;
+      }
+      
+      loading.value = true;
 
       try {
         const response = await api.login(form.value);
         localStorage.setItem('token', response.access_token);
-        router.push('/tasks');
+        router.push('/tasks?login=success');
       } catch (err) {
         error.value = err.response?.data?.message || 'Login failed. Please check your credentials.';
       } finally {
@@ -122,10 +185,27 @@ export default {
       }
     };
 
+    onMounted(() => {
+      if (route.query.logout === 'true') {
+        successMessage.value = 'You have been successfully logged out.';
+        showSuccess.value = true;
+        
+        // Remove query parameter from URL
+        router.replace('/login');
+        
+        // Auto-hide after 4 seconds
+        setTimeout(() => {
+          showSuccess.value = false;
+        }, 4000);
+      }
+    });
+
     return {
       form,
       loading,
       error,
+      successMessage,
+      showSuccess,
       handleLogin
     };
   }
